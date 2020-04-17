@@ -11,6 +11,7 @@ const char* password = "0101010101";
 #include "soc/soc.h"
 #include "soc/rtc_cntl_reg.h"
 
+#include "esp32cam_channels.h"
 //
 // WARNING!!! Make sure that you have either selected ESP32 Wrover Module,
 //            or another board which has PSRAM enabled
@@ -91,21 +92,21 @@ const int MotPin3 = 15;
 
 void initMotors() 
 {
-  ledcSetup(3, 2000, 8); // 2000 hz PWM, 8-bit resolution
-  ledcSetup(4, 2000, 8); // 2000 hz PWM, 8-bit resolution
-  ledcSetup(5, 2000, 8); // 2000 hz PWM, 8-bit resolution
-  ledcSetup(6, 2000, 8); // 2000 hz PWM, 8-bit resolution
-  ledcAttachPin(MotPin0, 3); 
-  ledcAttachPin(MotPin1, 4); 
-  ledcAttachPin(MotPin2, 5); 
-  ledcAttachPin(MotPin3, 6); 
+  ledcSetup(MotChannel0, 2000, 8); // 2000 hz PWM, 8-bit resolution
+  ledcSetup(MotChannel1, 2000, 8); // 2000 hz PWM, 8-bit resolution
+  ledcSetup(MotChannel2, 2000, 8); // 2000 hz PWM, 8-bit resolution
+  ledcSetup(MotChannel3, 2000, 8); // 2000 hz PWM, 8-bit resolution
+  ledcAttachPin(MotPin0, MotChannel0); 
+  ledcAttachPin(MotPin1, MotChannel1); 
+  ledcAttachPin(MotPin2, MotChannel2); 
+  ledcAttachPin(MotPin3, MotChannel3); 
 }
 
 const int ServoPin = 2;  
 void initServo() 
 {
-  ledcSetup(8, 50, 16); // 50 hz PWM, 16-bit resolution, range from 3250 to 6500.
-  ledcAttachPin(ServoPin, 8); 
+  ledcSetup(ServoChannel, 50, 16); // 50 hz PWM, 16-bit resolution, range from 3250 to 6500.
+  ledcAttachPin(ServoPin, ServoChannel); 
 }
 
 void setup() 
@@ -165,8 +166,8 @@ void setup()
   initMotors();
   initServo();
   
-  ledcSetup(7, 5000, 8);
-  ledcAttachPin(4, 7);  //pin4 is LED
+  ledcSetup(LEDChannel, 5000, 8);
+  ledcAttachPin(4, LEDChannel);  //pin4 is LED
   
   Serial.println("ssid: " + (String)ssid);
   Serial.println("password: " + (String)password);
@@ -210,9 +211,9 @@ void setup()
 
   for (int i=0;i<5;i++) 
   {
-    ledcWrite(7,10);  // flash led
+    ledcWrite(LEDChannel,10);  // flash led
     delay(200);
-    ledcWrite(7,0);
+    ledcWrite(LEDChannel,0);
     delay(200);    
   }       
 }

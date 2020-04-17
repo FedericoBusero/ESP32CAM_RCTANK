@@ -12,6 +12,8 @@ int noStop = 0;
 
 #include "dl_lib_matrix3d.h"
 
+#include "esp32cam_channels.h"
+
 typedef struct {
         httpd_req_t *req;
         size_t len;
@@ -234,7 +236,7 @@ static esp_err_t cmd_handler(httpd_req_t *req)
     //Don't use channel 1 and channel 2
     else if(!strcmp(variable, "flash")) 
     {
-      ledcWrite(7,val);
+      ledcWrite(LEDChannel,val);
     }  
     else if(!strcmp(variable, "speed")) 
     {
@@ -250,59 +252,59 @@ static esp_err_t cmd_handler(httpd_req_t *req)
     {
       if      (val > 650) val = 650;
       else if (val < 325) val = 325;       
-      ledcWrite(8,10*val);
+      ledcWrite(ServoChannel,10*val);
     }     
     else if(!strcmp(variable, "car")) {  
       if (val==1) {
         Serial.println("Forward");
         actstate = fwd;     
-        ledcWrite(4,speed);  // pin 12
-        ledcWrite(3,0);      // pin 13
-        ledcWrite(5,speed);  // pin 14  
-        ledcWrite(6,0);      // pin 15   
+        ledcWrite(MotChannel1,speed);  // pin 12
+        ledcWrite(MotChannel0,0);      // pin 13
+        ledcWrite(MotChannel2,speed);  // pin 14  
+        ledcWrite(MotChannel3,0);      // pin 15   
         delay(200);
       }
       else if (val==2) {
         Serial.println("TurnLeft");
-        ledcWrite(3,0);
-        ledcWrite(5,0); 
-        if      (actstate == fwd) { ledcWrite(4,speed); ledcWrite(6,    0); }
-        else if (actstate == rev) { ledcWrite(4,    0); ledcWrite(6,speed); }
-        else                      { ledcWrite(4,speed); ledcWrite(6,speed); }
+        ledcWrite(MotChannel0,0);
+        ledcWrite(MotChannel2,0); 
+        if      (actstate == fwd) { ledcWrite(MotChannel1,speed); ledcWrite(MotChannel3,    0); }
+        else if (actstate == rev) { ledcWrite(MotChannel1,    0); ledcWrite(MotChannel3,speed); }
+        else                      { ledcWrite(MotChannel1,speed); ledcWrite(MotChannel3,speed); }
         delay(100);              
       }
       else if (val==3) {
         Serial.println("Stop"); 
         actstate = stp;       
-        ledcWrite(4,0);
-        ledcWrite(3,0);
-        ledcWrite(5,0);     
-        ledcWrite(6,0);  
+        ledcWrite(MotChannel1,0);
+        ledcWrite(MotChannel0,0);
+        ledcWrite(MotChannel2,0);     
+        ledcWrite(MotChannel3,0);  
       }
       else if (val==4) {
         Serial.println("TurnRight");
-        ledcWrite(4,0);
-        ledcWrite(6,0); 
-        if      (actstate == fwd) { ledcWrite(3,    0); ledcWrite(5,speed); }
-        else if (actstate == rev) { ledcWrite(3,speed); ledcWrite(5,    0); }
-        else                      { ledcWrite(3,speed); ledcWrite(5,speed); }
+        ledcWrite(MotChannel1,0);
+        ledcWrite(MotChannel3,0); 
+        if      (actstate == fwd) { ledcWrite(MotChannel0,    0); ledcWrite(MotChannel2,speed); }
+        else if (actstate == rev) { ledcWrite(MotChannel0,speed); ledcWrite(MotChannel2,    0); }
+        else                      { ledcWrite(MotChannel0,speed); ledcWrite(MotChannel2,speed); }
         delay(100);              
       }
       else if (val==5) {
         Serial.println("Backward");  
         actstate = rev;      
-        ledcWrite(4,0);
-        ledcWrite(3,speed);
-        ledcWrite(5,0);  
-        ledcWrite(6,speed); 
+        ledcWrite(MotChannel1,0);
+        ledcWrite(MotChannel0,speed);
+        ledcWrite(MotChannel2,0);  
+        ledcWrite(MotChannel3,speed); 
         delay(200);              
       }
       if (noStop!=1) 
       {
-        ledcWrite(3, 0);
-        ledcWrite(4, 0);  
-        ledcWrite(5, 0);  
-        ledcWrite(6, 0);
+        ledcWrite(MotChannel0, 0);
+        ledcWrite(MotChannel1, 0);  
+        ledcWrite(MotChannel2, 0);  
+        ledcWrite(MotChannel3, 0);
       }         
     }        
     else 
